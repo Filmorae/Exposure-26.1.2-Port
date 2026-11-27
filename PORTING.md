@@ -64,6 +64,7 @@ Component-transferring recipes must apply only the source stack's runtime `getCo
 - `HangingEntity` owns synchronized direction data in 26.1.2. `PhotographFrameEntity#defineSynchedData` must call `super.defineSynchedData(builder)` before defining Exposure fields and must preserve the parent update lifecycle.
 - The humanoid `hat` is a child of `head` (`head.getChild("hat")`). A child already inherits its parent transform. Do not copy the parent's pose into the child's local pose a second time.
 - Selfie/held-camera poses flow through extracted humanoid render state and must preserve the selected hand, camera entity, yaw, pitch, and unaffected limb behavior.
+- The optional Fabric EMF adapter reapplies the selfie arm rotation through EMF's animation-end API, after the resource pack has positioned the shoulder. The corrected model also supplies the held item's transform. Read the operator's dominant arm from the rendered entity so remote players' camera poses match their equipment.
 
 ## Local validation
 

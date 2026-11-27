@@ -24,17 +24,13 @@
               "on_true": {"type": "minecraft:model", "model": "exposure:item/camera_gold_selfie", "tints": [{"type": "minecraft:constant", "value": -1}, {"type": "exposure:camera_glass"}]},
               "on_false": {"type": "minecraft:model", "model": "exposure:item/camera_selfie", "tints": [{"type": "minecraft:constant", "value": -1}, {"type": "exposure:camera_glass"}]}
             },
-            {
-              "type": "minecraft:condition", "property": "exposure:camera_gold",
-              "on_true": {"type": "minecraft:model", "model": "exposure:item/camera_parts/selfie_stick"},
-              "on_false": {"type": "minecraft:model", "model": "exposure:item/camera_parts/selfie_stick"}
-            },
+            {"type": "minecraft:model", "model": "exposure:item/camera_parts/selfie_stick"},
             {
               "type": "minecraft:condition", "property": "exposure:camera_has_flash",
               "on_true": {
                 "type": "minecraft:condition", "property": "exposure:camera_gold",
-                "on_true": {"type": "minecraft:model", "model": "exposure:item/camera_parts/flash_gold"},
-                "on_false": {"type": "minecraft:model", "model": "exposure:item/camera_parts/flash"}
+                "on_true": {"type": "minecraft:model", "model": "exposure:item/camera_parts/flash_gold_selfie"},
+                "on_false": {"type": "minecraft:model", "model": "exposure:item/camera_parts/flash_selfie"}
               },
               "on_false": {"type": "minecraft:empty"}
             },
@@ -42,8 +38,8 @@
               "type": "minecraft:condition", "property": "exposure:camera_has_lens",
               "on_true": {
                 "type": "minecraft:condition", "property": "exposure:camera_gold",
-                "on_true": {"type": "minecraft:model", "model": "exposure:item/camera_parts/lens_gold", "tints": [{"type": "minecraft:constant", "value": -1}, {"type": "exposure:camera_glass"}]},
-                "on_false": {"type": "minecraft:model", "model": "exposure:item/camera_parts/lens", "tints": [{"type": "minecraft:constant", "value": -1}, {"type": "exposure:camera_glass"}]}
+                "on_true": {"type": "minecraft:model", "model": "exposure:item/camera_parts/lens_gold_selfie", "tints": [{"type": "minecraft:constant", "value": -1}, {"type": "exposure:camera_glass"}]},
+                "on_false": {"type": "minecraft:model", "model": "exposure:item/camera_parts/lens_selfie", "tints": [{"type": "minecraft:constant", "value": -1}, {"type": "exposure:camera_glass"}]}
               },
               "on_false": {"type": "minecraft:empty"}
             }

@@ -29,18 +29,21 @@ public class CameraPoses {
 
     public void applySelfie(HumanoidModel<?> model, HumanoidArm arm, boolean cameraEntity) {
         ModelPart cameraArm = arm == HumanoidArm.RIGHT ? model.rightArm : model.leftArm;
+        applySelfie(model.head, cameraArm, arm, cameraEntity);
+    }
 
+    public void applySelfie(ModelPart head, ModelPart cameraArm, HumanoidArm arm, boolean cameraEntity) {
         // Arm follows camera:
-        cameraArm.xRot = (model.head.xRot + Math.abs(model.head.xRot * 0.13f)) + (-(float) Math.PI / 2F);
-        cameraArm.yRot = model.head.yRot;
+        cameraArm.xRot = (head.xRot + Math.abs(head.xRot * 0.13f)) + (-(float) Math.PI / 2F);
+        cameraArm.yRot = head.yRot;
         if (cameraEntity) {
             cameraArm.yRot += (arm == HumanoidArm.RIGHT ? -0.25f : 0.25f);
         }
 
-        if (model.head.xRot <= 0) {
-            cameraArm.zRot = (model.head.xRot * 0.15f) * (arm == HumanoidArm.RIGHT ? -1 : 1);
+        if (head.xRot <= 0) {
+            cameraArm.zRot = (head.xRot * 0.15f) * (arm == HumanoidArm.RIGHT ? -1 : 1);
         } else {
-            cameraArm.zRot = (model.head.xRot * 0.22f) * (arm == HumanoidArm.RIGHT ? -1 : 1);
+            cameraArm.zRot = (head.xRot * 0.22f) * (arm == HumanoidArm.RIGHT ? -1 : 1);
         }
     }
 

@@ -5,6 +5,7 @@ import fuzs.forgeconfigapiport.fabric.api.v5.client.ConfigScreenFactoryRegistry;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureClient;
 import io.github.mortuusars.exposure.PlatformHelperClient;
+import io.github.mortuusars.exposure.fabric.client.compat.EmfSelfiePoses;
 import io.github.mortuusars.exposure.client.gui.tooltip.CameraStandTooltip;
 import io.github.mortuusars.exposure.client.input.KeyboardHandler;
 import io.github.mortuusars.exposure.client.render.CameraStandEntityRenderer;
@@ -28,6 +29,8 @@ import net.fabricmc.fabric.api.client.rendering.v1.ClientTooltipComponentCallbac
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.SemanticVersion;
 import net.minecraft.client.color.item.ItemTintSource;
 import net.minecraft.client.color.item.ItemTintSources;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -43,6 +46,7 @@ public class ExposureFabricClient implements ClientModInitializer {
         PlatformHelperClient.bind(new PlatformHelperClientImpl());
 
         ExposureClient.init();
+        registerEmfSelfiePoses();
 
         ItemTintSources.ID_MAPPER.put(Exposure.resource("camera_glass"), CameraGlassTintSource.MAP_CODEC);
 
@@ -76,6 +80,24 @@ public class ExposureFabricClient implements ClientModInitializer {
 
         FabricS2CPacketHandler.register();
 
+    }
+
+    private static void registerEmfSelfiePoses() {
+        FabricLoader loader = FabricLoader.getInstance();
+        boolean compatibleEmf = loader.getModContainer("entity_model_features")
+                .map(mod -> mod.getMetadata().getVersion())
+                .filter(version -> version instanceof SemanticVersion)
+                .map(version -> (SemanticVersion) version)
+                .filter(version -> version.getVersionComponent(0) == 3 && version.getVersionComponent(1) == 3
+                        && version.getVersionComponent(2) >= 12)
+                .isPresent();
+        if (compatibleEmf && loader.isModLoaded("entity_texture_features")) {
+            try {
+                EmfSelfiePoses.register();
+            } catch (Exception | LinkageError e) {
+                Exposure.LOGGER.warn("Cannot register the optional EMF selfie pose hook.", e);
+            }
+        }
     }
 
     /** The former Fabric item-color provider's tint-index 1 branch. */

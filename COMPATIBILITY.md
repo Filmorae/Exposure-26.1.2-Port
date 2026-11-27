@@ -32,3 +32,16 @@ Controlled on Minecraft 26.1.2, Java 25, Fabric Loader 0.19.3, Fabric API 0.150.
 
 The complete Gradle build, both access widener validations and all 60 migration tests passed.
 The exact unmodified Photon configuration exceeds llvmpipe's compute shared-memory limit. IterationRP and production GPU frame times still require validation.
+
+## 2026-11-27 selfie pose candidate
+
+Controlled on Minecraft 26.1.2, Java 25, Fabric Loader 0.19.3, Fabric API 0.150.0+26.1.2 and Forge Config API Port 26.1.4. With EMF 3.3.12, ETF 7.2.7 and Fresh Animations: Player Extension 1.1, the previous build pointed the selfie stick at the ground even though selfie mode was active. The pack's player animation overwrote the selected arm rotation after Exposure's vanilla pose.
+
+| Scenario | Observed |
+|---|---|
+| Fresh Animations with right-handed slim model, left-handed wide model, and a camera in the off hand of a right-handed player | The correct arm held the selfie stick forward in the viewfinder and the photograph. All three photographs were exported from their film frame identifiers. The left-handed wide player wore a chestplate and took the picture while moving. |
+| Second client observing a left-handed photographer | The observer saw the left arm holding the stick and the camera mounted on it. The regular camera and gold camera with a lens and flash rendered as one assembly. Putting the camera away returned the arm to its resting pose. Previously, the composite in the item definition gave the body and stick different display transforms. |
+| Fresh Animations with Photon v1.4, Iris 1.10.9, Sodium 0.8.12, RenderScale 70% and `SH_SKYLIGHT=false` on llvmpipe | The viewfinder and exported film photograph showed the expected pose. The shutter used the first eligible world frame. |
+| EMF and ETF absent | The game loaded, the vanilla selfie pose rendered, and the film photograph exported successfully. |
+
+The adapter is optional and targets the EMF 3.3 API from 3.3.12 onward. The complete Gradle build, both access widener validations and all 61 migration tests passed. A viewer who joined after a camera was already active did not receive that camera state until it was activated again. Camera synchronization is outside the selfie render fix.

@@ -47,7 +47,7 @@ public class HumanoidMobRendererMixin {
             ItemStack stack = activeCamera.getItemStack();
             if (!(stack.getItem() instanceof CameraItem item)) return;
 
-            HumanoidArm arm = exposure$cameraArm(activeCamera, minecraft);
+            HumanoidArm arm = exposure$cameraArm(activeCamera, entity.getMainArm());
             Identifier itemId = BuiltInRegistries.ITEM.getKey(item);
             float actionAnim = exposure$actionAnim(operator, partialTick);
 
@@ -89,15 +89,14 @@ public class HumanoidMobRendererMixin {
         if (!(stack.getItem() instanceof CameraItem item) || !item.isDisassembled(stack)) return;
         if (minecraft.player == entity && minecraft.options.getCameraType() == CameraType.FIRST_PERSON) return;
 
-        HumanoidArm arm = exposure$cameraArm(camera, minecraft);
+        HumanoidArm arm = exposure$cameraArm(camera, entity.getMainArm());
         exposureState.exposure$setCameraPose(new CameraPoseRenderState(
                 CameraPoseRenderState.Pose.DISASSEMBLED, BuiltInRegistries.ITEM.getKey(item), arm,
                 exposure$actionAnim(operator, partialTick), false, 0, 0));
     }
 
     @Unique
-    private static HumanoidArm exposure$cameraArm(Camera camera, Minecraft minecraft) {
-        HumanoidArm mainArm = minecraft.options.mainHand().get();
+    private static HumanoidArm exposure$cameraArm(Camera camera, HumanoidArm mainArm) {
         return camera instanceof CameraInHand inHand && inHand.getHand() == InteractionHand.OFF_HAND
                 ? mainArm.getOpposite()
                 : mainArm;

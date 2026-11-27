@@ -22,10 +22,27 @@ sourceSets {
     }
 }
 
+repositories {
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'Modrinth'
+                url = 'https://api.modrinth.com/maven'
+            }
+        }
+        filter {
+            includeModule('maven.modrinth', 'entity-model-features')
+            includeModule('maven.modrinth', 'entitytexturefeatures')
+        }
+    }
+}
+
 dependencies {
     implementation project(':common')
     implementation "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
     implementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${rootProject.forge_config_api_port_version}"
+    compileOnly('maven.modrinth:entity-model-features:zh2AVI88') { transitive = false } // EMF 3.3.12
+    compileOnly('maven.modrinth:entitytexturefeatures:JxWjtiQZ') { transitive = false } // ETF 7.2.7
 }
 
 processResources {
