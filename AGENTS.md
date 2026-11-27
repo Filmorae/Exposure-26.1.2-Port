@@ -10,6 +10,12 @@ Before changing code:
 2. Read older migration reports only when a named subsystem or regression requires that history. Intermediate conclusions may have been superseded.
 3. Confirm the task is within the Fabric 26.1.2 support boundary. Do not expand scope without evidence.
 
+## Capture and player rendering
+
+- Prepare capture state before the camera update and queue asynchronous readback after the complete world render, before GUI drawing. Ordinary handheld shots use the first eligible frame. A changed viewpoint gets one settling frame and keeps the last player view on screen until the capture is queued.
+- Keep the EMF hook optional and client-only. Apply the selfie correction to the selected camera arm after EMF animation, using the photographer's dominant arm. Third-person selfie model parts must share the camera body's display transform for both hands.
+- For these changes, verify a saved photograph as well as the live view. Check timed Camera Stand shots after a viewpoint change, and check selfies from the photographer's and an observer's perspectives.
+
 ## Non-negotiable compatibility boundaries
 
 - Keep the mod id `exposure` and the existing Java package namespace.

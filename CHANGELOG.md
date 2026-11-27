@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.9.18-port.3+mc26.1.2] - 2026-11-27
+
+### Fixed
+
+- Capture now reads the finished world frame after shader post-processing and resolution scaling. Fixes dark skies, missing clouds, and texture-copy errors reproduced with Photon v1.4 and RenderScale at 70%.
+- Timed Camera Stand shots allow one world frame to settle at the new viewpoint. The live display holds the player's last view until the capture is queued.
+- Selfies retain the camera arm pose in EMF 3.3.12 with ETF 7.2.7 and the Fresh Animations player extension. Observers see the photographer's selected arm and an aligned camera, stick, lens, and flash.
+
+### Changed
+
+- Handheld shots use the first eligible frame by default, with asynchronous readback. The legacy direct-capture settings now apply only an optional additional delay.
+
 ## [1.9.18-port.2+mc26.1.2] - 2026-08-10
 
 ### Fixed

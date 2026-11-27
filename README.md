@@ -1,6 +1,6 @@
 # Exposure 1.9.18 for Minecraft 26.1.2
 
-> **Unofficial Fabric Port — Patch 2**
+> **Unofficial Fabric Port, Patch 3**
 
 This repository contains an unofficial Minecraft 26.1.2 Fabric port of [Exposure](https://github.com/mortuusars/Exposure), the camera mod created by [Mortuusars](https://github.com/mortuusars). It is based on Exposure 1.9.18 at fixed upstream commit [`9383e0c9237099947a1e6399fcace5772f496c7d`](https://github.com/mortuusars/Exposure/commit/9383e0c9237099947a1e6399fcace5772f496c7d).
 
@@ -9,12 +9,12 @@ Filmorae maintains this port but is not the original author. Problems specific t
 ## Status
 
 - Fabric only.
-- Port version: `1.9.18-port.2+mc26.1.2`.
-- Fixed the third-person grey duplicate photograph caused by the held photograph backside transform.
+- Port version `1.9.18-port.3+mc26.1.2` is available on [GitHub Releases](https://github.com/Filmorae/Exposure-26.1.2-Port/releases).
+- Patch 3 fixes dark or incomplete captures with shader and resolution-scaling combinations, stabilizes timed Camera Stand shots, and restores selfie poses with the Fresh Animations player extension.
 - The mod id remains `exposure` for dependent-mod recognition.
 - Compatibility with old Exposure worlds, albums, photographs, and repository data is not guaranteed. Back up a world before testing.
 
-The controlled migration verified the core camera and viewfinder, hand-held and Camera Stand Capture, direct and background Capture, photograph storage/rendering/export, film development and printing, Album/Signed Album/Lectern flows, photograph frames, recipes, commands, integrated-server behavior, and dedicated-server startup/shutdown. See [COMPATIBILITY.md](COMPATIBILITY.md) for the exact matrix and [KNOWN_ISSUES.md](KNOWN_ISSUES.md) for support limits.
+The port has controlled coverage for the camera and viewfinder, handheld and Camera Stand capture, photograph storage, rendering and export, film development and printing, albums, frames, recipes, commands, and game startup and shutdown. See [COMPATIBILITY.md](COMPATIBILITY.md) for the tested combinations and [KNOWN_ISSUES.md](KNOWN_ISSUES.md) for support limits.
 
 ## Requirements
 
@@ -24,7 +24,7 @@ The controlled migration verified the core camera and viewfinder, hand-held and 
 - [Fabric API](https://modrinth.com/mod/fabric-api) 0.150.0+26.1.2 or newer compatible 26.1.2 build
 - [Forge Config API Port](https://modrinth.com/mod/forge-config-api-port) 26.1.4
 
-Optional integrations in the source tree are not required runtime dependencies and are not all enabled or verified for this prerelease.
+The selfie compatibility layer is optional. It was tested with EMF 3.3.12, ETF 7.2.7, and Fresh Animations: Player Extension 1.1.
 
 ## Installation
 
@@ -37,7 +37,7 @@ Do not download this port from the official Exposure CurseForge or Modrinth proj
 
 ## Shader and rendering boundary
 
-Capture was controlled-tested without shaders and with Iris 1.11.2, Sodium 0.9.1, and BSL 8.4.01.2. That exact result does not establish compatibility with every Shader Pack, GPU, player-model layer, or skin-layer mod. The port uses Minecraft's normal frame lifecycle and does not hard-code an Iris or Shader-Pack-private framebuffer.
+Exposure reads the completed world frame before the GUI is drawn. Handheld capture uses the first eligible frame by default. The existing `force_direct_capture` settings now control an optional extra frame delay. If you enabled the setting as a workaround for dark photos, you can set it back to `false` to restore the default shutter timing. See [COMPATIBILITY.md](COMPATIBILITY.md) for shader, scaling, and player-model test results.
 
 ## Reporting a bug
 

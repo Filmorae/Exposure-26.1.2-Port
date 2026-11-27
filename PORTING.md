@@ -90,8 +90,8 @@ When adding a compatibility fix, record the affected versions, minimal reproduct
 
 ## Current release artifact
 
-- Version: `1.9.18-port.2+mc26.1.2`
+- Version: `1.9.18-port.3+mc26.1.2`
 - Target: Minecraft 26.1.2, Fabric, Java 25
-- File: `exposure-fabric-26.1.2-1.9.18-port.2+mc26.1.2.jar`
-- SHA-256: `66AD638442BA229243828236165880B125093DCDBA27B296CF7E7F15559EF6D8`
-- The verified local delivery copy is retained under `release-artifacts/` and is also attached to the matching GitHub Release. This workflow does not publish to Modrinth or CurseForge.
+- File: `exposure-fabric-26.1.2-1.9.18-port.3+mc26.1.2.jar`
+- SHA-256: `460bf1cf91c6605baf24f3f779a06bb35f485bf7b2201ec708c0f59df6388de3`
+- Download the JAR from the matching [GitHub Release](https://github.com/Filmorae/Exposure-26.1.2-Port/releases/tag/26.1.2-Fabric-port.3).
