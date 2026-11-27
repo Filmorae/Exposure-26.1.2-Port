@@ -14,13 +14,11 @@ The 1.21.1 NeoForge source is intentionally not enabled or carried as a supporte
 
 Capture must use Minecraft 26.1.2's normal extraction and frame graph rather than trying to replay old immediate-rendering calls.
 
-For background Capture, the task arms a dedicated `RenderTarget` and redirects the **next complete normal world frame** to that exclusive target. The normal frame supplies clear, sky, opaque terrain, block entities, entities, particles/weather, translucent content, and post-processing in the game's expected order. The target stays owned by the capture task until the asynchronous image callback has completed or the task has been safely cancelled.
+World capture prepares its camera settings before `GameRenderer.update`, so camera, terrain and entity extraction use the same viewpoint. It takes the first eligible complete world frame by default. The main target remains stable throughout the render. After `renderLevel` returns, shader and scaling hooks have completed and the GUI is still pending. Queue asynchronous `ScreenshotReadback` from the normal color target at that boundary.
 
-Immediately before GUI submission, Capture queues `ScreenshotReadback` and ends the main-target redirect. GUI, HUD, tooltips, and hand rendering therefore do not enter the photograph. Readback remains asynchronous and fence-backed. Never replace this with synchronous `glReadPixels`, a nested/extra `renderLevel`, or desktop/window screenshot cropping.
+If the capture changes the camera entity or perspective, preserve the last player-facing frame for presentation and render one complete settling frame at the new viewpoint before taking the photo. A remote Camera Stand can otherwise produce sky and stale terrain in its first shader frame. Restore temporary camera and lightmap settings immediately after submitting the readback. The presentation buffer is released after its final use, independently of readback completion. Capture-specific post effects use a separate color copy, held until the asynchronous callback completes. If the view, world or resources reset before a pending capture finishes, cancel it and release its buffers. Late pixel callbacks close their images.
 
-Direct Capture also waits for a complete new normal frame. It submits asynchronous readback from the normal main target at the established frame boundary and does not own an extra target. Direct and background tasks must preserve their separate target ownership, cancellation, resize/world/resource-reset, late-callback, and close paths.
-
-Compatibility work may adapt public frame lifecycle boundaries, but must not read an Iris-private or Shader-Pack-private framebuffer. The target seen through Minecraft's supported main-target path is the compatibility boundary.
+The existing `force_direct_capture` and mod-list settings only enable the legacy additional frame delay. All settings use the same world target. Preserve normal Minecraft and third-party frame sequencing. Never replace this boundary with synchronous `glReadPixels`, an extra `renderLevel`, desktop capture or a private Iris or Shader Pack framebuffer.
 
 ## Pixel and shader invariants
 

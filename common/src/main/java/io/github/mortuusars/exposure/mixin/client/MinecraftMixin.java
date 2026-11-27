@@ -1,11 +1,12 @@
 package io.github.mortuusars.exposure.mixin.client;
 
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.client.camera.CameraClient;
 import io.github.mortuusars.exposure.client.camera.viewfinder.ViewfinderCameraControlsScreen;
-import io.github.mortuusars.exposure.client.capture.task.BackgroundScreenshotCaptureTask;
+import io.github.mortuusars.exposure.client.capture.task.WorldFrameCaptureTask;
 import io.github.mortuusars.exposure.event.ClientEvents;
 import io.github.mortuusars.exposure.network.Packets;
 import io.github.mortuusars.exposure.network.packet.serverbound.ActiveCameraReleaseC2SP;
@@ -66,17 +67,14 @@ public abstract class MinecraftMixin {
         ClientEvents.disconnect();
     }
 
-    /**
-     * Fixes incompatibility with Iris and Distant Horizons (and potentially others).
-     * But this is not working properly if Distant Horizons and Iris are both installed and shaders are used - LODs render weirdly on top.
-     * (this issue is also fixes itself when LODs are toggled off and back on again). I don't know how to fix it, so Background capture is disabled if those mods are both detected.
-     * If those mods are used by themselves all is ok.
-     */
-    @ModifyReturnValue(method = "getMainRenderTarget", at = @At("RETURN"))
-    RenderTarget onGetMainRenderTarget(RenderTarget original) {
-        if (BackgroundScreenshotCaptureTask.isCapturing()) {
-            return BackgroundScreenshotCaptureTask.getRenderTarget();
-        }
-        return original;
+    @WrapOperation(method = "renderFrame", at = @At(value = "INVOKE",
+            target = "Lcom/mojang/blaze3d/pipeline/RenderTarget;blitToScreen()V"))
+    private void exposure$presentPlayerView(RenderTarget target, Operation<Void> original) {
+        original.call(WorldFrameCaptureTask.presentationTarget(target));
+    }
+
+    @Inject(method = "renderFrame", at = @At("RETURN"))
+    private void exposure$afterPresentation(boolean renderLevel, CallbackInfo ci) {
+        WorldFrameCaptureTask.onFrameFinished();
     }
 }

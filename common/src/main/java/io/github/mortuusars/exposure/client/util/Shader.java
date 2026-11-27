@@ -5,7 +5,6 @@ import com.mojang.blaze3d.resource.GraphicsResourceAllocator;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.client.camera.CameraClient;
-import io.github.mortuusars.exposure.client.capture.CaptureShader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelTargetBundle;
 import net.minecraft.client.renderer.PostChain;
@@ -104,10 +103,6 @@ public final class Shader {
         RenderSystem.assertOnRenderThread();
         if (!suppressViewfinder && CameraClient.viewfinder() != null) {
             CameraClient.viewfinder().shader().process();
-        }
-
-        if (CaptureShader.hasShader()) {
-            CaptureShader.process();
         }
     }
 }

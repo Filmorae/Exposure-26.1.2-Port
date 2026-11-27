@@ -12,6 +12,9 @@ import io.github.mortuusars.exposure.util.cycles.task.Result;
 import io.github.mortuusars.exposure.util.cycles.task.Task;
 import io.github.mortuusars.exposure.util.TranslatableError;
 import io.github.mortuusars.exposure.client.capture.action.CaptureAction;
+import net.minecraft.client.CameraType;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.Entity;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -79,9 +82,17 @@ public class Capture<T> extends Task<Result<T>> {
 
     private void beginCapture() {
         try {
+            Minecraft minecraft = Minecrft.get();
+            Entity previousCamera = minecraft.getCameraEntity();
+            CameraType previousPerspective = minecraft.options.getCameraType();
             // Mark first so a partially-applied non-composite action still receives afterCapture.
             captureActionsApplied = true;
             component.beforeCapture();
+            if ((Task<?>) capturingTask instanceof WorldFrameCaptureTask screenshot) {
+                boolean cameraChanged = previousCamera != minecraft.getCameraEntity()
+                        || previousPerspective != minecraft.options.getCameraType();
+                screenshot.prepare(this::restoreAfterSubmission, cameraChanged);
+            }
             capture();
         } catch (Throwable throwable) {
             finishCapture(null, throwable);
@@ -125,24 +136,33 @@ public class Capture<T> extends Task<Result<T>> {
             LOGGER.error("Capture completion callback failed.", callbackFailure);
             result = Result.error(ERROR_FAILED_GENERIC);
         } finally {
-            if (captureActionsApplied) {
-                try {
-                    if (result.isSuccessful()) {
-                        component.afterCapture();
-                    } else {
-                        component.afterCaptureFailure();
-                    }
-                } catch (Throwable restoreFailure) {
-                    LOGGER.error("Failed to restore capture state.", restoreFailure);
-                    result = Result.error(ERROR_FAILED_GENERIC);
-                }
-                captureActionsApplied = false;
+            try {
+                restoreActions(result.isSuccessful());
+            } catch (Throwable restoreFailure) {
+                LOGGER.error("Failed to restore capture state.", restoreFailure);
+                result = Result.error(ERROR_FAILED_GENERIC);
             }
         }
 
         ACTIVE_CAPTURES.remove(this);
         setDone();
         completableFuture.complete(result);
+    }
+
+    private void restoreAfterSubmission() {
+        restoreActions(true);
+    }
+
+    private void restoreActions(boolean successful) {
+        if (!captureActionsApplied) {
+            return;
+        }
+        captureActionsApplied = false;
+        if (successful) {
+            component.afterCapture();
+        } else {
+            component.afterCaptureFailure();
+        }
     }
 
     public void cancel() {
@@ -186,9 +206,10 @@ public class Capture<T> extends Task<Result<T>> {
     }
 
     public static Task<Result<Image>> screenshot() {
-        return ExposureClient.shouldUseDirectCapture()
-                ? new DirectScreenshotCaptureTask()
-                : new BackgroundScreenshotCaptureTask();
+        int framesToWait = ExposureClient.shouldUseDirectCapture()
+                ? Math.max(1, Config.Client.DIRECT_CAPTURE_DELAY_FRAMES.get())
+                : 0;
+        return new WorldFrameCaptureTask(framesToWait);
     }
 
     public static Task<Result<Image>> fromFile(File file) {

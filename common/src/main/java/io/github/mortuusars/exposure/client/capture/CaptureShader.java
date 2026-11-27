@@ -3,7 +3,6 @@ package io.github.mortuusars.exposure.client.capture;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.mortuusars.exposure.Exposure;
-import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.client.util.Shader;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
@@ -34,13 +33,6 @@ public final class CaptureShader {
             shaderLocation = location;
         } else {
             Exposure.LOGGER.warn("Failed to select capture post effect '{}'.", location);
-        }
-    }
-
-    public static void process() {
-        Identifier location = shaderLocation;
-        if (location != null) {
-            Shader.process(location, Minecrft.get().getMainRenderTarget());
         }
     }
 

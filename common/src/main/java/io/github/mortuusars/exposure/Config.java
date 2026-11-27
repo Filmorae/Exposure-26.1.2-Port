@@ -421,16 +421,16 @@ public class Config {
                                 "\nIf you experience flash synchronization issues (Flash having no effect on the image) - try increasing the value.")
                         .defineInRange("flash_capture_delay_ticks", 4, 1, FlashBlock.LIFETIME_TICKS);
                 FORCE_DIRECT_CAPTURE = builder
-                        .comment("Force legacy (pre 1.21) capturing method for taking images. Enable if you experiencing issues with resulting images.",
-                                "Direct method will be used regardless of this setting if mods defined in 'force_direct_capture_default_mods' is installed.",
+                        .comment("Keep the legacy direct-capture frame delay. Both settings capture from the normal world target.",
+                                "The delay also applies when a mod in 'force_direct_capture_default_mods' is installed.",
                                 "Default: false")
                         .define("force_direct_capture", false);
                 FORCE_DIRECT_CAPTURE_MODS = builder
-                        .comment("Direct capture will be used if any of these mods is installed.",
+                        .comment("Apply the legacy capture frame delay if any of these mods is installed.",
                                 "Format: '[\"mod_id\", \"mod_id\"]'. Default: [" + String.join(", ", Exposure.MODS_REQUIRING_DIRECT_CAPTURE) + "]")
                         .defineListAllowEmpty("force_direct_capture_default_mods", () -> Exposure.MODS_REQUIRING_DIRECT_CAPTURE, () -> "mod_id", o -> true);
                 DIRECT_CAPTURE_DELAY_FRAMES = builder
-                        .comment("Delay in frames before capturing an image if 'direct_capture' method is in use.",
+                        .comment("Additional eligible world frames to wait when the legacy delay is enabled (at least one).",
                                 "Set to higher value when leftovers of GUI elements (such as nameplates) are visible on the images",
                                 "(some shaders have temporal effects that take several frames to disappear fully)")
                         .defineInRange("direct_capture_delay_frames", 0, 0, 100);
